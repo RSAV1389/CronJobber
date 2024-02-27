@@ -1,0 +1,57 @@
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJTk9XVzMvaGlOUWd3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TkRBeU1qTXhNek15TkRoYUZ3MHpOREF5TWpBeE16TTNORGhhTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUURoZnpOdDRZWU11YnlmK0pXZGZKU2VhVUZQSVZkNE1jSDN3TkpiQkRMZmtpVml6U1dacEprNEhBOFcKWG5xRHU0RncvYnJvVDFYd0xLeVFaVldOTVVHM0ZydTU0cXpxYnkyeVlZY1h0b0RPd3NDSE42K0dRUXRBMkRDegpQcnk0ZzlQd1FmZHBKaUV1RUNqdE5lT1RNTjlTQVdya3Zzb1lyV0h5QlpLVTFsOGNTR0oxNE9aYXlmcWZ6MGZuClNsRTk3VElER2MzaEdvcVJIV3NPVUZnQWdhbVZYTWVXYmt6NzJKZ3FIcTk5N25rMUJUUitqM3FuQldLeURLWFcKc1E3TSswc3YrS3UvR3pxaWQ1Z05FUkY1aXR6dGh5THNaVGpoSFhaandRcmxlZGF3bTNMRTlaanhrY0ZMdWdoMgpOeGdkdEVZZnRmWHdWa1NqNHIvMTFJYVZuWk9SQWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJUcjRrOEZ2QjdXUHdydWltVmo4VUNRRXFzNDREQVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQWljZmR6TVo1Ugppdk4zckdzb2QyVm5uQnp4TGJjbDhJaWJUTVQvSFpyaU5LTC84Q2dQcEFtOU45c0NxZmlTTC9aKzJ5RUxOYnJGCkR0K3BLQXV1bE8yOEY2ZDVaTEUra0QxOEVNdDRlVFJRNk5BVEFTSVM1VGY0S1VrWjFZaXhYQkJHODN2ZEpkMTIKN3p1emNHS1l4Z211Y1dDRERuQjJETit1Skt6ZjRKekNtWWVYQUxXandQNGsxMlZxTVRvMTdzUDNPY2Q4OXVoZgpxTS9USTBET2VYL05EMFpLclhERXhZNkxPUHByYnRjMHpLN3A5MXVxK04rRWs2STl6Tkd1SUVlaExFKzd2VmxQCjBBVjBDZTVQdkxkU2FyKzhoVlBIQ2ZQVzdSeXZiZUpuNlNCL0pCd1h3VkFpMnRmM29hdTVmcUFPSVlvVFRvbmcKcGVia1FPNksrMnFyCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
+    server: https://5A3E86B7ABD49D814B4B276C8D7860E4.gr7.eu-central-1.eks.amazonaws.com
+  name: arn:aws:eks:eu-central-1:359026105850:cluster/test
+- cluster:
+    certificate-authority: C:\Users\Russe\.minikube\ca.crt
+    extensions:
+    - extension:
+        last-update: Tue, 27 Feb 2024 12:17:06 EET
+        provider: minikube.sigs.k8s.io
+        version: v1.32.0
+      name: cluster_info
+    server: https://172.28.27.221:8443
+  name: minikube
+contexts:
+- context:
+    cluster: arn:aws:eks:eu-central-1:359026105850:cluster/test
+    user: arn:aws:eks:eu-central-1:359026105850:cluster/test
+  name: arn:aws:eks:eu-central-1:359026105850:cluster/test
+- context:
+    cluster: minikube
+    extensions:
+    - extension:
+        last-update: Tue, 27 Feb 2024 12:17:06 EET
+        provider: minikube.sigs.k8s.io
+        version: v1.32.0
+      name: context_info
+    namespace: default
+    user: minikube
+  name: minikube
+current-context: minikube
+kind: Config
+preferences: {}
+users:
+- name: arn:aws:eks:eu-central-1:359026105850:cluster/test
+  user:
+    exec:
+      apiVersion: client.authentication.k8s.io/v1beta1
+      args:
+      - --region
+      - eu-central-1
+      - eks
+      - get-token
+      - --cluster-name
+      - test
+      - --output
+      - json
+      command: aws
+      env: null
+      interactiveMode: IfAvailable
+      provideClusterInfo: false
+- name: minikube
+  user:
+    client-certificate: C:\Users\Russe\.minikube\profiles\minikube\client.crt
+    client-key: C:\Users\Russe\.minikube\profiles\minikube\client.key
