@@ -42,7 +42,7 @@ func TestCreateCronJobSpec(t *testing.T) {
 	}
 }
 
-func TestCreateJob(t *testing.T) {
+func TestCreateCronJob(t *testing.T) {
 	command := []string{
 		"/bin/sh",
 		"-c",
@@ -54,7 +54,7 @@ func TestCreateJob(t *testing.T) {
 	config, _ := GetConfig()
 	client, _ := BuildClient(config)
 	jobSpec := CreateCronJobSpec(name, namespace, command, "0", "0", "*", "*", "4")
-	cronJob, err := CreateJob(client, jobSpec)
+	cronJob, err := CreateCronJob(client, jobSpec)
 	if err != nil {
 		t.Errorf("Unexpected error: %v/n", err)
 	}
@@ -63,10 +63,20 @@ func TestCreateJob(t *testing.T) {
 	}
 }
 
+func TestSuspendCronJob(t *testing.T) {
+	config, _ := GetConfig()
+	client, _ := BuildClient(config)
+	name := "my-cronjob"
+	err := SuspendCronJob(client, name)
+	if err != nil {
+		t.Errorf("Unexpected error: %v/n", err)
+	}
+}
+
 func TestDeleteJob(t *testing.T) {
 	config, _ := GetConfig()
 	client, _ := BuildClient(config)
-	err := DeleteJob(client, "my-cronjob")
+	err := DeleteCronJob(client, "my-cronjob")
 	if err != nil {
 		t.Errorf("Error Deleting CronJob %v", err)
 	}
