@@ -11,11 +11,18 @@ import (
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 	"log"
+	"os/user"
+	"path/filepath"
 )
 
-func GetConfig(path string) (*rest.Config, error) {
-	kubeconfing := flag.String("kubeconfig", path, "")
-	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfing)
+func GetConfig() (*rest.Config, error) {
+	usr, err := user.Current()
+	if err != nil {
+		log.Fatal(err)
+	}
+	path := filepath.Join(usr.HomeDir, ".kube", "config")
+	kubeconfig := flag.String("kubeconfig", path, "")
+	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
 	if err != nil {
 		fmt.Println(err)
 		return nil, err
@@ -49,7 +56,7 @@ func ShowJobs(jobs *batchv1.JobList) {
 	}
 }
 
-func CreateCronJobSpec(min string, hour string, dayMonth string, month string, dayWeek string) *batchv1.CronJob {
+func CreateCronJobSpec(command []string, min string, hour string, dayMonth string, month string, dayWeek string) *batchv1.CronJob {
 	cronJobSpec := &batchv1.CronJob{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "my-cronjob",
@@ -63,13 +70,9 @@ func CreateCronJobSpec(min string, hour string, dayMonth string, month string, d
 						Spec: corev1.PodSpec{
 							Containers: []corev1.Container{
 								{
-									Name:  "job-container",
-									Image: "busybox",
-									Command: []string{
-										"/bin/sh",
-										"-c",
-										"echo Hello from the Kubernetes cluster",
-									},
+									Name:    "job-container",
+									Image:   "busybox",
+									Command: command,
 								},
 							},
 							RestartPolicy: corev1.RestartPolicyOnFailure,
@@ -92,27 +95,51 @@ func CreateJob(client *kubernetes.Clientset, jobSpec *batchv1.CronJob) (*batchv1
 	return job, nil
 }
 
+func DeleteJob(client *kubernetes.Clientset, name string) error {
+	err := client.BatchV1().CronJobs("default").Delete(context.Background(), name, metav1.DeleteOptions{})
+	if err != nil {
+		log.Fatalf("Error Deleting CronJob %v", err)
+		return err
+	}
+	log.Print("Deleting job seems successful")
+	return nil
+}
+
 func main() {
-	path := "config"
-	config, err := GetConfig(path)
+	config, err := GetConfig()
 	if err != nil {
 		log.Fatalf("Error obtaining config: %v/n", err)
 	}
+
 	client, err := BuildClient(config)
 	if err != nil {
 		log.Fatalf("Error building client: %v/n", err)
 	}
+
 	jobs, err := GetJobs(client)
 	if err != nil {
 		log.Fatalf("Error obtaining jobs: %v/n", err)
 	}
+
 	ShowJobs(jobs)
 
-	jobSpec := CreateCronJobSpec("0", "0", "*", "*", "4")
+	command := []string{
+		"/bin/sh",
+		"-c",
+		"echo Hello from the Kubernetes cluster",
+	}
+
+	jobSpec := CreateCronJobSpec(command, "0", "0", "*", "*", "4")
 
 	_, er := CreateJob(client, jobSpec)
+
 	if er != nil {
 		log.Fatalf("Error creating CronJob: %v/n", err)
+	}
+
+	ero := DeleteJob(client, "my-cronjob")
+	if ero != nil {
+		log.Fatalf("Error Deleting CronJob: %v/n", err)
 	}
 
 }
