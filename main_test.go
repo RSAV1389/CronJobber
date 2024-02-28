@@ -73,6 +73,16 @@ func TestSuspendCronJob(t *testing.T) {
 	}
 }
 
+func TestResumeCronJob(t *testing.T) {
+	config, _ := GetConfig()
+	client, _ := BuildClient(config)
+	name := "my-cronjob"
+	err := ResumeCronJob(client, name)
+	if err != nil {
+		t.Errorf("Unexpected error: %v/n", err)
+	}
+}
+
 func TestDeleteJob(t *testing.T) {
 	config, _ := GetConfig()
 	client, _ := BuildClient(config)

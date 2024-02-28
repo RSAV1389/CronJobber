@@ -138,6 +138,24 @@ func SuspendCronJob(client *kubernetes.Clientset, name string) error {
 	return nil
 }
 
+func ResumeCronJob(client *kubernetes.Clientset, name string) error {
+	cronJob, err := client.BatchV1().CronJobs("default").Get(context.Background(), name, metav1.GetOptions{})
+	if err != nil {
+		log.Fatalf("Error Getting CronJob %v", err)
+		return err
+	}
+
+	*cronJob.Spec.Suspend = false
+	_, err = client.BatchV1().CronJobs("default").Update(context.Background(), cronJob, metav1.UpdateOptions{})
+	if err != nil {
+		log.Fatalf("Error Resuming CronJob %v", err)
+		return err
+	}
+
+	log.Print("Resuming job seems successful")
+	return nil
+}
+
 func main() {
 	config, err := GetConfig()
 	if err != nil {
