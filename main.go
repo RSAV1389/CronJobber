@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"flag"
 	"fmt"
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -21,8 +20,7 @@ func GetConfig() (*rest.Config, error) {
 		log.Fatal(err)
 	}
 	path := filepath.Join(usr.HomeDir, ".kube", "config")
-	kubeconfig := flag.String("kubeconfig", path, "")
-	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
+	config, err := clientcmd.BuildConfigFromFlags("", path)
 	if err != nil {
 		fmt.Println(err)
 		return nil, err
@@ -56,7 +54,7 @@ func ShowJobs(jobs *batchv1.JobList) {
 	}
 }
 
-func CreateCronJobSpec(command []string, min string, hour string, dayMonth string, month string, dayWeek string) *batchv1.CronJob {
+func CreateCronJobSpec(name string, namespace string, command []string, min string, hour string, dayMonth string, month string, dayWeek string) *batchv1.CronJob {
 	cronJobSpec := &batchv1.CronJob{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "my-cronjob",
@@ -129,7 +127,10 @@ func main() {
 		"echo Hello from the Kubernetes cluster",
 	}
 
-	jobSpec := CreateCronJobSpec(command, "0", "0", "*", "*", "4")
+	name := "my-cronjob"
+	namespace := "default"
+
+	jobSpec := CreateCronJobSpec(name, namespace, command, "0", "0", "*", "*", "4")
 
 	_, er := CreateJob(client, jobSpec)
 
